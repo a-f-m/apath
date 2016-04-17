@@ -13,3 +13,6 @@
 
 
 **Restrictions.** The library is intended for use with in-memory JSON objects, XML Dom's, or others, although it is possible to access persistence systems. But so far it is unsuited in this scenario due to the fact that *apath* iterate over solutions step by step and does not work with query plans incorporating underlying index structures (in contrast to elaborated XPath engines).    
+## Very Quick Tour
+
+tbd
