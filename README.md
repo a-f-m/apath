@@ -52,7 +52,7 @@ The obligatory book snippet (borrowed from <a href="http://goessner.net/articles
 }
 ~~~
 
-The following snippet shows the set-up. First, the JSON	file is parsed and an JSONSmart object is built (1). Then the step builder for JSONSmart (2) and the *apath* processor is created (3).
+The following snippet shows the set-up. First, the JSON	file is parsed (1). Then the step builder (2) and the *apath* processor is created (3). Here we use the step builder for JSONSmart.
 
 ~~~json
 // net.minidev.json.JSONObject
@@ -76,7 +76,7 @@ Path path = new Path(
 List<Object> results = processor.selectAll(jo, path); //(2)
 ~~~
 
-Then all authors are retrieved (2). Note that <code>results</code> contain a list of objects of the underlying structure, in our case (JSONSmart) java string objects.
+Then all authors are retrieved (2). Note that <code>results</code> contains a list of objects of the underlying structure, in our case (JSONSmart) java string objects.
 
 To get all prices, one can use the *descendants* step:
 
@@ -140,3 +140,4 @@ Note that, as described in the intro, path builders for concrete languages like 
 # <a name="bench"></a> Benchmarks
 
 ... coming soon ...
+
