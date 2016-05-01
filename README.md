@@ -156,7 +156,7 @@ Comparison with JSONPath and XPath:
 
 | apath step                       | JSONPath           | XPath  |
 | -------------------------------- |-------------------|-----|
-| childrenByName(String *name*)      | *name*<br><em>*.name</em> **(1)** | *name* |
+| childrenByName(String *name*)      | *name*<br/> <em>\*.name</em> **(1)** | *name* |
 | childByIndex(i)      | [i]      | [i]  |
 | allChildren() | *      |    * |
 | descendants() | ..      |    // |
