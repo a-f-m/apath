@@ -2,7 +2,7 @@
 
 * *apath* is a *small* java library for selecting objects via simple, basic **path** expressions. One application is to access hierarchical structures like JSON, XML, S-Expressions, or others. Nevertheless, because only a *view* of the underlying data is defined, arbitrary structures can be handled as hierarchies.
 
-* *apath* paths consists of *steps*, following the principles of <a href="https://www.w3.org/TR/2014/REC-xpath-30-20140408">XPath</a> and <a href="http://goessner.net/articles/JsonPath">JSONPath</a>, and offers a few basic, predefined *step constructors*. Although steps have intended semantics, users are free to give them own semantics in the context of their application. For instance, one implementation of the **a**bstract *childrenByName(name)*-step over JSON could be to skip the JSON-Array object (if it is the value of property *name*) as first class and to return the array items immediately. This makes it possible to use the same path for selecting objects from JSON and XML, assuming some conventions for JSON structures. 
+* *apath* paths consists of *steps*, following the principles of <a href="https://www.w3.org/TR/2014/REC-xpath-30-20140408">XPath</a> and <a href="http://goessner.net/articles/JsonPath">JSONPath</a>, and offers a few basic, predefined *step constructors*. Although steps have intended semantics, users are free to give them own semantics in the context of their application. For instance, one implementation of the **a**bstract *childrenByName(name)*-step over JSON could be to skip the JSON-Array object (if it is the object to which the step is applied) as first class and to apply the step to the array items directly. This makes it possible to use the same path for selecting objects from JSON and XML, assuming some conventions for JSON structures. 
 
 * One of the further conceptual goals was to allow for programmatically defining new custom step constructors. For example, if you want to access a typical department/employee structure, you can define a *members(name, salary)* step constructor that retrieves department members accordingly. Alternatively, *apath* provides filters to get members in the classic way. Note that steps are not intended to be orthogonal, for reasons of textual expressiveness. 
 
@@ -54,7 +54,7 @@ The obligatory book snippet (borrowed from <a href="http://goessner.net/articles
 
 The following snippet shows the set-up. First, the JSON	file is parsed (1). Then the step builder (2) and the *apath* processor is created (3). Here we use the step builder for JSONSmart.
 
-~~~json
+~~~java
 // net.minidev.json.JSONObject
 
 JSONObject jo = (JSONObject) JSONValue.parse(new FileReader("books.json")); //(1)
@@ -65,7 +65,7 @@ PathProcessor processor = new PathProcessor(); //(3)
 
 To select all book authors, an appropriate path with its steps is created (1) in the following snippet. The fourth step is the selection of all children (a '*' in JSONPath and XPath)
 
-~~~json
+~~~java
 Path path = new Path(
 		sb.childrenByName("root"),
 		sb.childrenByName("store"),
@@ -80,7 +80,7 @@ Then all authors are retrieved (2). Note that <code>results</code> contains a li
 
 To get all prices, one can use the *descendants* step:
 
-~~~json
+~~~java
 List<Object> results = 
 	processor.selectAll(
 		jo,
@@ -94,7 +94,7 @@ System.out.println(results); // ~> [19.95, 8.95, 12.99]
 
 To exemplify the composability of *apath* the last selection could be split into two statements:
 
-~~~json
+~~~java
 JSONObject store = (JSONObject) processor
 		.selectAll(jo, new Path(sb.childrenByName("root"), sb.childrenByName("store"))).get(0);
 
@@ -105,7 +105,7 @@ results = processor.selectAll(store, new Path(sb.descendants(), sb.childrenByNam
 
 Although *apath* shall not be *yet another* concrete path language, the library offers a simple path builder for better readability, especially for users that do not aim at building extensions (e.g. own step constructors). The following path objects are equivalent to the above ones.
 
-~~~json
+~~~java
 SimplePathBuilder pb = new SimplePathBuilder(sb);
 
 Path path = pb.buildPathFromTerms("root", "store", "book", "*", "author");

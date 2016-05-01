@@ -42,9 +42,27 @@ public class JsonSmartStepBuilder extends StepBuilder {
 					}
 				} else if (skipArraysAtNameSelection && node instanceof JSONArray) {
 					
-					return skipArray(name, node, enclosingPath, currStepNo);
+					Step s = enclosingPath.stepBefore(currStepNo);
+					if (s != null && !(s instanceof Descendants)) {
+						
+						return skipArray(node, enclosingPath, currStepNo);
+					} else {
+						return null;
+					}
 				}
 				return null;
+			}
+
+			private Iterator<Object> skipArray(Object node, Path enclosingPath, int currStepNo) {
+				
+				Iterator<Object> it = ((JSONArray) node).iterator();
+				
+				Mapper<Object, Object> m = new Mapper<Object, Object>(it) {
+					protected Object map(Object x) {
+						return childrenByName(name).applyTo(x, enclosingPath, currStepNo);
+					}
+				};
+				return m.iterator();
 			}
 		};
 	}
@@ -53,24 +71,6 @@ public class JsonSmartStepBuilder extends StepBuilder {
 		return ((JSONObject) node).get(name);
 	}
 
-	private Object skipArray(String name, Object node, Path enclosingPath, int currStepNo) {
-		
-		Step s = enclosingPath.stepBefore(currStepNo);
-		if (s != null && !(s instanceof Descendants)) {
-			
-			Iterator<Object> x = ((JSONArray) node).iterator();
-			
-			Mapper<Object, Object> y = new Mapper<Object, Object>(x) {
-				protected Object map(Object x) {
-					return childrenByName(name).applyTo(x, enclosingPath, currStepNo);
-				}
-			};
-			return y.iterator();
-		} else {
-			return null;
-		}
-	}
-	
 	@Override
 	public ChildByIndex childByIndex(int i) {
 
