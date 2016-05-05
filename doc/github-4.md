@@ -187,7 +187,7 @@ Comparison with JSONPath and XPath:
 
 * *apath* is "open" in both directions, i.e., as sketched above, in the layer below it arbitrary structures can be made ready for selection. In the layer above it, arbitrary concrete syntax parsers could be defined, that builds paths and steps accordingly. One scenario could be the implementation of XPath- or JSONPath- (subset) parsers.
 
-* The library is equipped with step constructors for <a href="https://github.com/netplex/json-smart-v2">json-smart</a> and jdk-xml-dom. Currently, no optimizations are performed. A [performance](#Performance) evaluation below compare *apath* with <a href="https://github.com/jayway/JsonPath">jayway</a>, <a href="https://xml.apache.org/xalan-j/">xalan</a> and <a href="http://saxon.sourceforge.net/">saxon</a>.
+* The library is equipped with step constructors for <a href="https://github.com/netplex/json-smart-v2">json-smart</a> and jdk-xml-dom. Currently, no optimizations are performed. A [performance](#Performance) evaluation below compare *apath* with <a href="https://github.com/jayway/JsonPath">jayway</a>, jdk-XPath and <a href="http://saxon.sourceforge.net/">saxon</a>.
 
 
 
@@ -196,8 +196,22 @@ Comparison with JSONPath and XPath:
 
 ## Performance<a name="Performance"></a>
 
-... coming soon ...
+The following table shows the performance in % of `apath over JsonSmart`.
 
+
+| Engine  | Children | Descendants | Chain |   |
+|---------|----------|-------------|-------|---|
+| apath over JsonSmart | 100 | 100 | 100 |  |
+| apath over JdkDom | 352 | 266 | 501 | (*) | 
+| JSONPath (jayway) over JsonSmart | 223 | 137 | 224 |  |
+| XPath over SaxonDom | 61 | 11 | 169 | (\*\*) | 
+| XPath over JdkDom | 2192 | 450 | 142633 | (\*\*) | 
+
+Engines are designed by form `X over Y` where *X* and *Y* states the language and the underlying object structure/evaluators, respectively. 
+
+(*) A little surprise is the difference to `XPath over JdkDom`. It could be that `XPath over JdkDom` perform a huge overhead whereas the other engines directly evaluate the chain step by step.
+
+(\*\*) As expected, *Children* and *Descendants* is faster with saxon (*Descendants* with an order of magnitude), may be due to excessive use of index structures. Future work will focus on that issue. Interestingly, `apath over JsonSmart`-*Chain* is faster, may be due to less index overhead. 
 
 ## Scenarios
 
