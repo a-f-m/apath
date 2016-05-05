@@ -209,7 +209,7 @@ The following table shows the performance in % of `apath over JsonSmart`.
 
 Engines are designed by form `X over Y` where *X* and *Y* states the language and the underlying object structure/path evaluator, respectively. 
 
-(*) A little surprise is the difference to `XPath over JdkDom`. It could be that `XPath over JdkDom` perform a huge overhead whereas the other engines directly evaluate the chain step by step.
+(*) A little surprise is the difference to `XPath over JdkDom`. It could be that `XPath over JdkDom` perform a huge overhead and does not use the underlying objects directly whenever possible.
 
 (\*\*) As expected, *Children* and *Descendants* is faster with saxon (*Descendants* with an order of magnitude), may be due to excessive use of index structures. Future work will focus on that issue. Interestingly, `apath over JsonSmart`-*Chain* is faster, may be due to less index overhead. 
 
