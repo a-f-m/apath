@@ -205,9 +205,9 @@ The following table shows the performance in % of `apath over JsonSmart`.
 | apath over JdkDom | 352 | 266 | 501 | (*) | 
 | JSONPath (jayway) over JsonSmart | 223 | 137 | 224 |  |
 | XPath over SaxonDom | 61 | 11 | 169 | (\*\*) | 
-| XPath over JdkDom | 2192 | 450 | 142633 | (\*\*) | 
+| XPath over JdkDom | 2192 | 450 | 142633 |  | 
 
-Engines are designed by form `X over Y` where *X* and *Y* states the language and the underlying object structure/evaluators, respectively. 
+Engines are designed by form `X over Y` where *X* and *Y* states the language and the underlying object structure/path evaluator, respectively. 
 
 (*) A little surprise is the difference to `XPath over JdkDom`. It could be that `XPath over JdkDom` perform a huge overhead whereas the other engines directly evaluate the chain step by step.
 
