@@ -8,67 +8,70 @@ import org.afm.apath.core.Step;
 import org.afm.apath.core.Step.AllChildren;
 import org.afm.apath.core.Step.ChildByIndex;
 import org.afm.apath.core.Step.ChildrenByName;
-import org.afm.apath.core.Step.Descendants;
 import org.afm.apath.core.StepBuilder;
-import org.afm.basics.iteration.Mapper;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 public class JsonSmartStepBuilder extends StepBuilder {
 	
-	boolean skipArraysAtNameSelection;
+	/**
+	 * Arrays will be skipped except before childByIndex-steps
+	 */
+	private boolean skipArrays;
 	
 	public JsonSmartStepBuilder() {
 	}
 	
-	public JsonSmartStepBuilder(boolean skipArraysAtNameSelection) {
-		this.skipArraysAtNameSelection = skipArraysAtNameSelection;
+	public JsonSmartStepBuilder(boolean skipArrays) {
+		this.skipArrays = skipArrays;
+	}
+	
+	class JsAllChildren extends AllChildren {
+
+		public JsAllChildren() {
+			super();
+		}
+
+		@Override
+		public Iterator<Object> applyTo(Object node, Path enclosingPath, int currStepNo) {
+
+			if (node instanceof JSONObject) {
+				return ((JSONObject) node).values().iterator();
+				
+			} else if (node instanceof JSONArray) {
+				return ((JSONArray) node).iterator();
+			}
+			return Collections.emptyIterator();
+		}
+	}
+	
+	class JsChildrenByName extends ChildrenByName {
+
+		public JsChildrenByName(String name) {
+			super(name);
+		}
+		
+		@Override
+		public Object applyTo(Object node, Path enclosingPath, int currStepNo) {
+			
+//			System.out.println("apply " + this + " to " + node);
+			
+			if (node instanceof JSONObject) {
+				
+				Object jo = ((JSONObject) node).get(name);
+				if (jo != null) {
+					return skipArrays && jo instanceof JSONArray ? skipArray(jo, enclosingPath, currStepNo) : jo;
+				}
+			}
+			return null;
+		}
 	}
 
 	@Override
 	public ChildrenByName childrenByName(String name) {
 		
-		return new ChildrenByName(name) {
-			
-			@Override
-			public Object applyTo(Object node, Path enclosingPath, int currStepNo) {
-				
-				if (node instanceof JSONObject) {
-					
-					Object o = getIt(node, name);
-					if (o != null) {
-						return o;
-					}
-				} else if (skipArraysAtNameSelection && node instanceof JSONArray) {
-					
-					Step s = enclosingPath.stepBefore(currStepNo);
-					if (s != null && !(s instanceof Descendants)) {
-						
-						return skipArray(node, enclosingPath, currStepNo);
-					} else {
-						return null;
-					}
-				}
-				return null;
-			}
-
-			private Iterator<Object> skipArray(Object node, Path enclosingPath, int currStepNo) {
-				
-				Iterator<Object> it = ((JSONArray) node).iterator();
-				
-				Mapper<Object, Object> m = new Mapper<Object, Object>(it) {
-					protected Object map(Object x) {
-						return childrenByName(name).applyTo(x, enclosingPath, currStepNo);
-					}
-				};
-				return m.iterator();
-			}
-		};
-	}
-
-	private Object getIt(Object node, String name) {
-		return ((JSONObject) node).get(name);
+		return new JsChildrenByName(name);
 	}
 
 	@Override
@@ -79,8 +82,11 @@ public class JsonSmartStepBuilder extends StepBuilder {
 			@Override
 			public Object applyTo(Object node, Path enclosingPath, int currStepNo) {
 
+//				System.out.println("apply " + this + " to " + node);
+
 				if (node instanceof JSONArray && inRange((JSONArray) node, i)) {
-					return ((JSONArray) node).get(i);
+					Object jo = ((JSONArray) node).get(i);
+					return skipArrays && jo instanceof JSONArray ? skipArray(jo, enclosingPath, currStepNo) : jo;
 				}
 				return null;
 			}
@@ -90,24 +96,26 @@ public class JsonSmartStepBuilder extends StepBuilder {
 	@Override
 	public AllChildren allChildren() {
 
-		return new AllChildren() {
-			
-			@Override
-			public Iterator<?> applyTo(Object node, Path enclosingPath, int currStepNo) {
-
-				if (node instanceof JSONObject) {
-					return ((JSONObject) node).values().iterator();
-					
-				} else if (node instanceof JSONArray) {					
-					return ((JSONArray) node).iterator();
-				}
-				return Collections.emptyIterator();
-			}
-		};
+		return new JsAllChildren();
+	}
+	
+	private Object skipArray(Object node, Path enclosingPath, int currStepNo) {
+		
+		Step stepAfter = enclosingPath.stepAfter(currStepNo);
+		boolean indexSelection = stepAfter != null && stepAfter instanceof ChildByIndex ;
+		
+		if (!indexSelection) {
+			return new JsAllChildren().applyTo(node, enclosingPath, currStepNo);
+		}
+		return node;
 	}
 	
 	private boolean inRange(JSONArray ja, int i) {
 		return i >= 0 && i <= ja.size() - 1;
+	}
+
+	public void setSkipArrays(boolean skipArrays) {
+		this.skipArrays = skipArrays;
 	}
 
 

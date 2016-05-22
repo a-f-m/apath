@@ -61,16 +61,16 @@ public abstract class StepBuilder {
 
 	private Iterator<Object> descendantsHierarchic(Object node, Path enclosingPath, int currStepNo) {
 
-		Object appl = allChildren().applyTo(node, enclosingPath, currStepNo);
-		if (!(appl instanceof Iterator<?>)) {
+		Object children = allChildren().applyTo(node, enclosingPath, currStepNo);
+		if (!(children instanceof Iterator<?>)) {
 			throw new RuntimeException("iterator<?> expected");
 		}
 		@SuppressWarnings("unchecked")
-		Iterator<Object> ch = (Iterator<Object>) appl;
+		Iterator<Object> childrenIter = (Iterator<Object>) children;
 		// if (ch == null) { deferred TODO
 		// throw new RuntimeException("");
 		// }
-		return new Composer<Object>(new Single<Object>(node), new Mapper<Object, Object>(ch) {
+		return new Composer<Object>(new Single<Object>(node), new Mapper<Object, Object>(childrenIter) {
 			protected Object map(Object x) {
 				return descendantsHierarchic(x, enclosingPath, currStepNo);
 			};

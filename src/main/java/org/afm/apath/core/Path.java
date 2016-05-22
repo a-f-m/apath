@@ -41,4 +41,8 @@ public class Path {
 		return hasStep(i - 1) ? steps.get(i - 1) : null; 
 	}
 	
+	@Override
+	public String toString() {
+		return steps.toString();
+	}
 }

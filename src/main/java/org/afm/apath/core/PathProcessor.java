@@ -36,12 +36,16 @@ public class PathProcessor {
 	}
 
 	private void selectAll(Object node, List<Object> results, Path path, int stepNo) {
+		
+		if (node == null) {
+			return;
+		}
 
 		// decomposition:
 		if (node instanceof Iterator<?>) {
-			Iterator<?> iter = (Iterator<?>) node;
-			while (iter.hasNext()) {
-				selectAll(iter.next(), results, path, stepNo);
+			Iterator<?> it = (Iterator<?>) node;
+			while (it.hasNext()) {
+				selectAll(it.next(), results, path, stepNo);
 			}
 			return;
 		}
@@ -64,11 +68,14 @@ public class PathProcessor {
 
 	private void gatherResults(Object stepResults, List<Object> results) {
 		
+		if (stepResults == null) {
+			return;
+		}
+		// decomposition:
 		if (stepResults instanceof Iterator<?>) {
-
 			Iterator<?> it = (Iterator<?>) stepResults;
 			while (it.hasNext()) {
-				results.add(it.next());
+				gatherResults(it.next(), results);
 			}
 		} else {
 			results.add(stepResults);
