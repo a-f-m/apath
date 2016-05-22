@@ -154,11 +154,11 @@ results = processor.selectAll(
 		doc, pb.buildPathFromTerms("root", "store", "book", "author", "string()")); //(2)
 ~~~
 
-**Align with JSON**. (1) tell the JSON wrapper that you don't want arrays as first class before name selection:
+**Align with JSON**. (1) tell the JSON wrapper that you don't want arrays as first class:
 
 ~~~java
-boolean skipArraysAtNameSelection = true;
-StepBuilder sb = new JsonSmartStepBuilder(skipArraysAtNameSelection);
+boolean skipArrays = true;
+StepBuilder sb = new JsonSmartStepBuilder(skipArrays);
 ~~~
 
 Now you can use the same path for JSON too.
@@ -178,7 +178,7 @@ Comparison with JSONPath and XPath:
 | allChildren() | *      |    * |
 | descendants() | ..      |    // |
 
-**(1)** if the context is an JSON array and `skipArraysAtNameSelection` is true.
+**(1)** if the context is an JSON array and `skipArrays` is true.
 
 ## Customize<a name="Customize"></a>
 
