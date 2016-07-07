@@ -37,7 +37,7 @@ public interface Step {
 		protected Namespace namespace; // to serve XML too, deferred
 		protected String name;
 
-		protected ChildrenByName(String name) {
+		public ChildrenByName(String name) {
 			this.name = name;
 		}
 
@@ -56,7 +56,7 @@ public interface Step {
 
 		protected int i;
 
-		protected ChildByIndex(int i) {
+		public ChildByIndex(int i) {
 			this.i = i;
 		}
 		
@@ -102,6 +102,6 @@ public interface Step {
 		public String toString() {
 			return "PredicateEval(" + p + ")";
 		}
-}
+	}
 
 }
