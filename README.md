@@ -357,10 +357,11 @@ The above snippet is the blueprint for introducing new steps. The **actual step 
 public Iterator<Object> applyTo(Object node, Path enclosingPath, int currStepNo) {
 	
 	if (node instanceof JSONObject) {
-		// note: no cast checks for readability and compactness
+		// note: no cast checks for readability and compactness; 
+		// excessive casting necessary due to json smart 
 		JSONObject book = (JSONObject) ((JSONObject) node).get("book"); //(1)
 		if (book != null) {
-			JSONArray categBooks = (JSONArray) ((JSONObject) book).get(category); //(2)
+			JSONArray categBooks = (JSONArray) book.get(category); //(2)
 			if (categBooks != null) {
 				return new Filter<Object>(categBooks.iterator()) { //(3)
 					protected boolean accept(Object x) {
